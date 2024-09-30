@@ -88,6 +88,13 @@ def delete_entry(post_id):
         result = {'status': 0, 'message': repr(e)}
     return jsonify(result)
 
+@app.route('/search/', methods=['GET'])
+def search():
+    query = request.args.get("query") # gets input field
+    entries = db.session.query(models.Post)
+    if query:
+        return render_template('search.html', entries=entries, query=query) # passes into template so that entry can be shown
+    return render_template('search.html')
 
 if __name__ == "__main__":
     app.run()
