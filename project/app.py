@@ -1,3 +1,4 @@
+from functools import wraps
 import sqlite3
 from pathlib import Path
 
@@ -74,13 +75,26 @@ def logout():
     flash('You were logged out')
     return redirect(url_for('index'))
 
+# Ensures that only authenticated users (those with 'logged_in' set to True in the session) can access certain routes.
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('logged_in'):
+            flash('Please log in.')
+            return jsonify({'status': 0, 'message': 'Please log in.'}), 401
+        # logged_in' is True, the decorator calls the original function (f(*args, **kwargs)), passing along any arguments and keyword arguments.
+        return f(*args, **kwargs)
+    return decorated_function
 
+# Checks if the user is logged in, and if not, it returns an error message and prevents further execution of the protected route.
 @app.route('/delete/<int:post_id>', methods=['GET'])
+@login_required
 def delete_entry(post_id):
     """Deletes post from database."""
     result = {'status': 0, 'message': 'Error'}
     try:
-        db.session.query(models.Post).filter_by(id=post_id).delete()
+        new_id = post_id
+        db.session.query(models.Post).filter_by(id=new_id).delete()
         db.session.commit()
         result = {'status': 1, 'message': "Post Deleted"}
         flash('The entry was deleted.')

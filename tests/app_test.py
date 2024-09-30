@@ -114,3 +114,13 @@ def test_search_functionality(client):
     assert response.status_code == 200
     assert b"Test Entry 1" not in response.data
     assert b"Another Entry" not in response.data
+
+def test_delete_message(client):
+    """Ensure the messages are being deleted"""
+    rv = client.get("/delete/1")
+    data = json.loads(rv.data)
+    assert data["status"] == 0
+    login(client, app.config["USERNAME"], app.config["PASSWORD"])
+    rv = client.get("/delete/1")
+    data = json.loads(rv.data)
+    assert data["status"] == 1
