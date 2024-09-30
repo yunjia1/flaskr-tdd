@@ -13,8 +13,12 @@ DATABASE = "flaskr.db"
 USERNAME = "admin"
 PASSWORD = "admin"
 SECRET_KEY = "change_me"
+# SQLALCHEMY_DATABASE_URI configuration is set to point to a local SQLite database file (flaskr.db) 
 SQLALCHEMY_DATABASE_URI = f'sqlite:///{Path(basedir).joinpath(DATABASE)}'
-SQLALCHEMY_TRACK_MODIFICATIONS = False
+SQLALCHEMY_TRACK_MODIFICATIONS = False # to avoid overhead
+
+# Once app.py connects to the database, it assumes the tables have already been created (which happened when you ran create_db.py).
+# app.py can now query and manipulate the data in those tables via SQLAlchemy.
 
 
 # create and initialize a new Flask app
