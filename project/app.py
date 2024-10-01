@@ -1,9 +1,8 @@
 from functools import wraps
-import sqlite3
 from pathlib import Path
 import os 
 
-from flask import Flask, g, render_template, request, session, \
+from flask import Flask, render_template, request, session, \
                   flash, redirect, url_for, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 

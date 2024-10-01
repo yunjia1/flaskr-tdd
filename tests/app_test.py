@@ -1,4 +1,3 @@
-import os
 from flask import json
 import pytest
 from pathlib import Path
@@ -96,7 +95,7 @@ def test_search_functionality(client):
     assert response.status_code == 200
     assert b"Test Entry 1" in response.data
     assert b"Another Entry" in response.data
-    
+        
     # Test search with partial matching query
     response = client.get('/search/?query=another')
     assert response.status_code == 200
