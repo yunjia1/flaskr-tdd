@@ -1,6 +1,7 @@
 from functools import wraps
 import sqlite3
 from pathlib import Path
+import os 
 
 from flask import Flask, g, render_template, request, session, \
                   flash, redirect, url_for, abort, jsonify
@@ -15,7 +16,12 @@ USERNAME = "admin"
 PASSWORD = "admin"
 SECRET_KEY = "change_me"
 # SQLALCHEMY_DATABASE_URI configuration is set to point to a local SQLite database file (flaskr.db) 
-SQLALCHEMY_DATABASE_URI = f'sqlite:///{Path(basedir).joinpath(DATABASE)}'
+url = os.getenv('DATABASE_URL', f'sqlite:///{Path(basedir).joinpath(DATABASE)}')
+
+if url.startswith("postgres://"):
+    url = url.replace("postgres://", "postgresql://", 1)
+
+SQLALCHEMY_DATABASE_URI = url
 SQLALCHEMY_TRACK_MODIFICATIONS = False # to avoid overhead
 
 # Once app.py connects to the database, it assumes the tables have already been created (which happened when you ran create_db.py).
