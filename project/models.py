@@ -1,5 +1,6 @@
 from project.app import db
 
+
 # This file is used to generate the new schema
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)

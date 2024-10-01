@@ -6,6 +6,7 @@ from project.app import app, db
 
 TEST_DB = "test.db"
 
+
 # Sets up a known state for each test function before the test runs.
 @pytest.fixture
 def client():
@@ -75,44 +76,36 @@ def test_messages(client):
     assert b"&lt;Hello&gt;" in rv.data
     assert b"<strong>HTML</strong> allowed here" in rv.data
 
-def test_delete_message(client):
-    """Ensure the messages are being deleted"""
-    rv = client.get('/delete/1')
-    data = json.loads(rv.data)
-    assert data["status"] == 1
 
 def test_search_functionality(client):
     """Test the search functionality"""
     # Log in
     login(client, app.config["USERNAME"], app.config["PASSWORD"])
-    
+
     # Add some test entries
     client.post('/add', data=dict(title="Test Entry 1", text="This is a test entry"), follow_redirects=True)
     client.post('/add', data=dict(title="Another Entry", text="This is another test"), follow_redirects=True)
-    
     # Test search with matching query
     response = client.get('/search/?query=test')
     assert response.status_code == 200
     assert b"Test Entry 1" in response.data
     assert b"Another Entry" in response.data
-        
     # Test search with partial matching query
     response = client.get('/search/?query=another')
     assert response.status_code == 200
     assert b"Test Entry 1" not in response.data
     assert b"Another Entry" in response.data
-    
     # Test search with non-matching query
     response = client.get('/search/?query=nonexistent')
     assert response.status_code == 200
     assert b"Test Entry 1" not in response.data
     assert b"Another Entry" not in response.data
-    
     # Test search with empty query
     response = client.get('/search/')
     assert response.status_code == 200
     assert b"Test Entry 1" not in response.data
     assert b"Another Entry" not in response.data
+
 
 def test_delete_message(client):
     """Ensure the messages are being deleted"""

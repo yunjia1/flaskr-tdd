@@ -7,6 +7,5 @@ with app.app_context():
     db.create_all()
 
     # commit the changes
-    db.session.commit()    
-    # now, the database (flaskr.db) is created with the necessary tables.
-    
+    db.session.commit()
+# now, the database (flaskr.db) is created with the necessary tables.

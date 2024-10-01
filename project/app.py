@@ -1,27 +1,27 @@
 from functools import wraps
 from pathlib import Path
-import os 
+import os
 
-from flask import Flask, render_template, request, session, \
-                  flash, redirect, url_for, abort, jsonify
+from flask import Flask, render_template, request, session, flash, redirect, url_for, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 
 basedir = Path(__file__).resolve().parent
 
-# created a configuration section for config variables 
+# created a configuration section for config variables
 DATABASE = "flaskr.db"
 USERNAME = "admin"
 PASSWORD = "admin"
 SECRET_KEY = "change_me"
-# SQLALCHEMY_DATABASE_URI configuration is set to point to a local SQLite database file (flaskr.db) 
+# SQLALCHEMY_DATABASE_URI configuration is set to point to a local SQLite database file (flaskr.db)
 url = os.getenv('DATABASE_URL', f'sqlite:///{Path(basedir).joinpath(DATABASE)}')
 
 if url.startswith("postgres://"):
     url = url.replace("postgres://", "postgresql://", 1)
 
 SQLALCHEMY_DATABASE_URI = url
-SQLALCHEMY_TRACK_MODIFICATIONS = False # to avoid overhead
+SQLALCHEMY_TRACK_MODIFICATIONS = False  # to avoid overhead
+
 
 # Once app.py connects to the database, it assumes the tables have already been created (which happened when you ran create_db.py).
 # app.py can now query and manipulate the data in those tables via SQLAlchemy.
@@ -55,6 +55,7 @@ def add_entry():
     flash('New entry was successfully posted')
     return redirect(url_for('index'))
 
+
 # GET is used for accessing a webpage, while POST is used when information is sent to the server
 # When a user accesses the /login URL, they are using a GET request, but when they attempt to log in, a POST request is used.
 @app.route('/login', methods=['GET', 'POST'])
@@ -80,6 +81,7 @@ def logout():
     flash('You were logged out')
     return redirect(url_for('index'))
 
+
 # Ensures that only authenticated users (those with 'logged_in' set to True in the session) can access certain routes.
 def login_required(f):
     @wraps(f)
@@ -90,6 +92,7 @@ def login_required(f):
         # logged_in' is True, the decorator calls the original function (f(*args, **kwargs)), passing along any arguments and keyword arguments.
         return f(*args, **kwargs)
     return decorated_function
+
 
 # Checks if the user is logged in, and if not, it returns an error message and prevents further execution of the protected route.
 @app.route('/delete/<int:post_id>', methods=['GET'])
@@ -107,13 +110,15 @@ def delete_entry(post_id):
         result = {'status': 0, 'message': repr(e)}
     return jsonify(result)
 
+
 @app.route('/search/', methods=['GET'])
 def search():
-    query = request.args.get("query") # gets input field
+    query = request.args.get("query")  # gets input field
     entries = db.session.query(models.Post)
     if query:
-        return render_template('search.html', entries=entries, query=query) # passes into template so that entry can be shown
+        return render_template('search.html', entries=entries, query=query)  # passes into template so that entry can be shown
     return render_template('search.html')
+
 
 if __name__ == "__main__":
     app.run()
